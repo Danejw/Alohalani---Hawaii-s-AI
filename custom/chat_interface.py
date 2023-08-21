@@ -7,7 +7,7 @@ from langchain.embeddings import OpenAIEmbeddings
 import openai
 
 
-from search_embeddings import load_embeddings_df, search_embeddings
+from search_embeddings import load_embeddings_df_from_github, search_embeddings
 
 # Provide api key
 #openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -17,7 +17,7 @@ from search_embeddings import load_embeddings_df, search_embeddings
 embeddings_model = OpenAIEmbeddings()
 
 args = {"csv_path": r"./custom/text/Hawaii_embeddings.csv"}  # Update with your CSV file path
-embeddings_df = load_embeddings_df(args["csv_path"])
+embeddings_df = load_embeddings_df_from_github(args["csv_path"])
 
 model = "gpt-3.5-turbo"
 

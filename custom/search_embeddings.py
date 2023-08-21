@@ -1,5 +1,7 @@
+from io import StringIO
 from langchain.embeddings import OpenAIEmbeddings
 from openai.embeddings_utils import cosine_similarity
+import requests
 import tiktoken
 import openai
 
@@ -19,6 +21,33 @@ def load_embeddings_df(csv_path):
     # Convert the string representation of lists to actual lists
     embeddings_df['embeddings'] = embeddings_df['embeddings'].apply(lambda x: np.array(eval(x)))
     return embeddings_df
+
+def load_embeddings_df_from_github(csv_path):
+    '''load embeddings dataframe from the specified CSV file'''
+    
+    # Construct the GitHub raw URL based on the relative file path
+    github_raw_url = f"https://raw.githubusercontent.com/Danejw/Alohalani---Hawaii-s-AI/master/{csv_path}"
+    
+    try:
+        # Fetch CSV content from the GitHub raw URL
+        response = requests.get(github_raw_url)
+        
+        if response.status_code == 200:
+            csv_content = response.text
+            
+            # Read the CSV data from the content
+            embeddings_df = pd.read_csv(StringIO(csv_content), index_col=0)
+            
+            # Convert the string representation of lists to actual lists
+            embeddings_df['embeddings'] = embeddings_df['embeddings'].apply(lambda x: np.array(eval(x)))
+            
+            return embeddings_df
+        else:
+            print(f"Failed to fetch CSV data from {github_raw_url}. Status code: {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"An error occurred while fetching CSV data: {str(e)}")
+        return None
 
 def embed_item(content: str, embeddings_model: OpenAIEmbeddings) -> tuple:
     return embeddings_model.embed_documents([content])[0]
