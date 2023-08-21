@@ -8,17 +8,8 @@ import os
 
 from search_embeddings import load_embeddings_df, search_embeddings
 
-# Load .env file
-env = load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
-
-# Retrieve API key
-API_KEY = os.getenv("OPENAI_API_KEY")
-
-# Check if the API key is loaded correctly
-if not API_KEY:
-    raise ValueError("API Key not found!")
-
-openai.api_key = API_KEY
+# Load env file
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
 # Load embeddings model and dataframe
