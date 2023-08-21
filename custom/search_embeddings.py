@@ -1,29 +1,16 @@
-from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
 from openai.embeddings_utils import cosine_similarity
 import tiktoken
 import openai
 
 import pandas as pd
-import os
 import random
 from termcolor import colored
 import numpy as np
+import streamlit as st
 
 
-
-# Load .env file
-env = load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
-
-# Retrieve API key
-API_KEY = os.getenv("OPENAI_API_KEY")
-
-# Check if the API key is loaded correctly
-if not API_KEY:
-    raise ValueError("API Key not found!")
-
-openai.api_key = API_KEY
-
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
 def load_embeddings_df(csv_path):

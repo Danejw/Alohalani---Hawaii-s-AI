@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 import pandas as pd
 import openai
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -8,24 +7,14 @@ import tenacity
 
 # set up logging
 import logging
+import streamlit as st
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-# Load .env file
-# Load .env file from the root of the project
-env = load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
-
-# Retrieve API key
-API_KEY = os.getenv("OPENAI_API_KEY")
-
-# Check if the API key is loaded correctly
-if not API_KEY:
-    raise ValueError("API Key not found!")
-
-openai.api_key = API_KEY
-
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
 # Implement exponential backoff, try 10 times, wait 1 second after the first failure,
