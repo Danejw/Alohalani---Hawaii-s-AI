@@ -12,8 +12,11 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 # Load embeddings model and dataframe
 embeddings_model = OpenAIEmbeddings()
 
-args = {"csv_path": r"C:\Users\RecallableFacts\Desktop\LangchainCreator\custom\text\en_wikipedia_org_wiki_Hawaii.csv_embeddings.csv"}  # Update with your CSV file path
+args = {"csv_path": r".\custom\text\en_wikipedia_org_wiki_Hawaii.csv_embeddings.csv"}  # Update with your CSV file path
 embeddings_df = load_embeddings_df(args["csv_path"])
+
+model = "gpt-3.5-turbo"
+
 
 class GPTChat:
     def __init__(self):
@@ -36,7 +39,7 @@ class GPTChat:
         full_response = ""
 
         for response in openai.ChatCompletion.create(
-            model='gpt-4',
+            model=model,
             messages=self.messages,
             temperature=0,
             stream=True
@@ -51,9 +54,7 @@ class GPTChat:
         return full_response
 
 
-
-
-# Set the page configuration with the desired background color
+# Set the page configurations
 st.set_page_config(
     page_title="Alohalani - Your Hawaiian Assistant",
     page_icon="🌺",  # Change to your desired icon
@@ -61,91 +62,87 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+def main():
+
+    # Initialize session state
+    if "chatbot" not in st.session_state:
+        st.session_state.chatbot = GPTChat()
+        
+        
+    # Change button colors to Hawaiian theme
+    st.markdown(
+        """
+        <style>
+            .stButton>button {
+                background-color: #007BFF; /* Hawaiian color */
+                color: white;
+            }
+            body {
+                background-color: #ffffff; /* Replace with your desired color */
+            }
+            .title {
+                text-align: center;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Play Hawaiian music (optional)
+    #st.audio("hawaii_music.mp3", format="audio/mp3")
 
 
-# Initialize chat history
-if "chatbot" not in st.session_state:
-    st.session_state.chatbot = GPTChat()
-    
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
-    
-    
-# Change button colors to Hawaiian theme
-st.markdown(
-    """
-    <style>
-        .stButton>button {
-            background-color: #007BFF; /* Hawaiian color */
-            color: white;
-        }
-        body {
-            background-color: #ffffff; /* Replace with your desired color */
-        }
-        .title {
-            text-align: center;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+    # Streamlit UI
+    st.markdown("<h1 class='title'>🌺🌺🌺🌺 Aloha! 🌺🌺🌺🌺</h1>", unsafe_allow_html=True)
 
+    # Display image of Alohalani
+    st.image("./images/alohalani.gif", use_column_width=True)
 
-# Play Hawaiian music (optional)
-#st.audio("hawaii_music.mp3", format="audio/mp3")
+    st.markdown("<h1 class='title'>I'm Alohalani - Your Hawaiian Assistant</h1>", unsafe_allow_html=True)
 
+    alohalani = st.chat_message("Alohalani", avatar="🌺")
 
-
-
-# Streamlit UI
-st.markdown("<h1 class='title'>🌺🌺🌺🌺 Aloha! 🌺🌺🌺🌺</h1>", unsafe_allow_html=True)
-
-# Display a Hawaiian image
-st.image("./images/alohalani.gif", use_column_width=True)
-
-# Streamlit UI
-st.markdown("<h1 class='title'>I'm Alohalani - Your Hawaiian Assistant</h1>", unsafe_allow_html=True)
-
-alohalani = st.chat_message("Alohalani", avatar="🌺")
-
-alohalani.markdown("<h5>Hiki iaʻu ke aʻo iā ʻoe e pili ana iā Hawaiʻi.</h5>",  unsafe_allow_html=True)
-alohalani.markdown("I can teach you about Hawaii.")
-
-    
-# Display chat messages from history on app rerun
-displayed_messages = set()  # To keep track of displayed messages
-
-for message in st.session_state.chatbot.messages:
-    message_content = message["content"]
-    if message["role"] == "user":
-        if message_content not in displayed_messages:
-            with st.chat_message("You", avatar="🙂"):
-                st.markdown(message_content)
-                displayed_messages.add(message_content)
-    elif message["role"] == "assistant":
-        if message_content not in displayed_messages:
-            with st.chat_message("Alohalani", avatar="🌺"):
-                st.markdown(message_content)
-                displayed_messages.add(message_content)
-
-
-if user_input := st.chat_input("Ask me anything about Hawaii, Hawaiian history, or its culture.", key="user_input"):
-    related_code = search_embeddings(embeddings_df, user_input, n=5, pprint=True, n_lines=1)
-    related_code_text = '\n'.join(related_code.text.values)  # Update to 'text' column
-    
-    with st.chat_message("user", avatar="🙂"):
-        st.markdown(user_input)
-        st.session_state.chatbot.add_message("user", user_input)
+    alohalani.markdown("<h5>Hiki iaʻu ke aʻo iā ʻoe e pili ana iā Hawaiʻi.</h5>",  unsafe_allow_html=True)
+    alohalani.markdown("I can teach you about Hawaii.")
 
         
-    # Display assistant response in chat message container
-    with st.chat_message("assistant", avatar="🌺"):
-        message_placeholder = st.empty()
-        full_response = ""
+    # Display chat messages from history on app rerun
+    displayed_messages = set()  # To keep track of displayed messages
+
+    for message in st.session_state.chatbot.messages:
+        message_content = message["content"]
+        if message["role"] == "user":
+            if message_content not in displayed_messages:
+                with st.chat_message("You", avatar="🙂"):
+                    st.markdown(message_content)
+                    displayed_messages.add(message_content)
+        elif message["role"] == "assistant":
+            if message_content not in displayed_messages:
+                with st.chat_message("Alohalani", avatar="🌺"):
+                    st.markdown(message_content)
+                    displayed_messages.add(message_content)
+
+
+    if user_input := st.chat_input("Ask me anything about Hawaii, Hawaiian history, or its culture.", key="user_input"):
+        related_code = search_embeddings(embeddings_df, user_input, n=5, pprint=True, n_lines=1)
+        related_code_text = '\n'.join(related_code.text.values)  # Update to 'text' column
         
-        full_response = st.session_state.chatbot.get_gpt_response(user_input, message_placeholder)
+        # Display user message in chat message container
+        with st.chat_message("user", avatar="🙂"):
+            st.markdown(user_input)
+            st.session_state.chatbot.add_message("user", user_input)
+
+            
+        # Display assistant response in chat message container
+        with st.chat_message("assistant", avatar="🌺"):
+            message_placeholder = st.empty()
+            full_response = ""
+            
+            full_response = st.session_state.chatbot.get_gpt_response(user_input, message_placeholder)
+            
+            st.session_state.chatbot.add_message("assistant", full_response)
         
-        st.session_state.chatbot.add_message("assistant", full_response)
-    
-    
+        
+if __name__ == "__main__":
+    main()
 
