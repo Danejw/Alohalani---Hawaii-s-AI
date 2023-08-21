@@ -1,6 +1,7 @@
 """
 This script contains the implementation of a chat interface for Alohalani, an AI assistant specialized in answering questions about Hawaii, Hawaiian history, and culture. The chat interface is built using Streamlit and OpenAI's GPT-3 model. The script defines a GPTChat class that handles user input, generates responses using the GPT-3 model, and stores the chat history. The script also loads a pre-trained embeddings model and a dataframe containing embeddings for Hawaiian text. The chat interface allows users to interact with Alohalani by asking questions about Hawaii, Hawaiian history, and culture. Alohalani responds to user questions with the spirit of Aloha using Hawaiian words and phrases. The chat interface also provides users with accurate and engaging information about Hawaii's rich heritage, breathtaking landscapes, and vibrant traditions.
 """
+import time
 import streamlit as st
 from langchain.embeddings import OpenAIEmbeddings
 import openai
@@ -24,7 +25,8 @@ model = "gpt-3.5-turbo"
 class GPTChat:
     def __init__(self):
         self.messages = [{'role': 'system', 'content': "Your name is Alohalani and you are an assistant made to questions about Hawaii, Hawaiian history, and culture. Respond with the spirit of Aloha using Hawaiian words and phrases. Make sure to answer any user question in the context of Hawaii only. If the user asks about something other that the context of Hawaii, pollitely let them know that you specialize in Hawaii topics. Use emojis to express your emotions."}]
-
+        self.isGenerating = False
+        
     def take_user_input(self):
         user_input = st.text_input("You:", key="user_input")
         return user_input
@@ -41,6 +43,7 @@ class GPTChat:
 
         full_response = ""
 
+        self.isGenerating = True
         for response in openai.ChatCompletion.create(
             model=model,
             messages=self.messages,
@@ -53,7 +56,9 @@ class GPTChat:
             
         message_placeholder.markdown(full_response)
         self.add_message('assistant', full_response)
-
+               
+        self.isGenerating = False
+            
         return full_response
 
 
@@ -66,7 +71,6 @@ st.set_page_config(
 )
 
 def main():
-
     # Initialize session state
     if "chatbot" not in st.session_state:
         st.session_state.chatbot = GPTChat()
@@ -163,26 +167,36 @@ I am thrilled to introduce myself as Alohalani, your go-to assistant for all thi
             
             st.session_state.chatbot.add_message("assistant", full_response)
         
+    # Create placeholders for the links
+    link1_placeholder = st.empty()
+    link2_placeholder = st.empty()
+    link3_placeholder = st.empty()
     
-
-    # Links to display below chat input
-    link1 = "https://ko-fi.com/danejw"
-    link2 = "https://buy.stripe.com/bIY7uW5Mz1hubdu000"
-    link3 = "https://github.com/Danejw/Alohalani---Hawaii-s-AI"
-
-    # Create a column layout for the links
-    col1, col2, col3 = st.columns(3)
-
-    # Add your links to the columns
-    with col1:
-        st.write("<div style='text-align: center'><a href='" + link1 + "'>Buy Me Coffee </a>☕️</div>", unsafe_allow_html=True)
-
-    with col2:
-        st.write("<div style='text-align: center'><a href='" + link2 + "'>Fuel My Creatitvity </a>❤️🔥</div>", unsafe_allow_html=True)
-
-    with col3:
-        st.write("<div style='text-align: center'><a href='" + link3 + "'>Github </a>⭐</div>", unsafe_allow_html=True)
+    time.sleep(3)
+    
+    # Check if the model has finished generating
+    if user_input:        
+            # Hide the links while the model is generating
+        link1_placeholder.empty()
+        link2_placeholder.empty()
+        link3_placeholder.empty()
         
+        # Links to display after the model has generated a response
+        link1 = "https://ko-fi.com/danejw"
+        link2 = "https://buy.stripe.com/bIY7uW5Mz1hubdu000"
+        link3 = "https://github.com/Danejw/Alohalani---Hawaii-s-AI"
+
+        # Display the links
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.write("<div style='text-align: center'><a href='" + link1 + "'>Buy Me Coffee ☕️</a></div>", unsafe_allow_html=True)
+
+        with col2:
+            st.write("<div style='text-align: center'><a href='" + link2 + "'>Fuel My Creativity ❤️🔥</a></div>", unsafe_allow_html=True)
+
+        with col3:
+            st.write("<div style='text-align: center'><a href='" + link3 + "'>GitHub ⭐</a></div>", unsafe_allow_html=True)
     
 if __name__ == "__main__":
     main()
