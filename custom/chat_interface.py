@@ -16,7 +16,7 @@ from search_embeddings import load_embeddings_df, search_embeddings
 # Load embeddings model and dataframe
 embeddings_model = OpenAIEmbeddings()
 
-args = {"csv_path": r".\custom\text\Hawaii_embeddings.csv"}  # Update with your CSV file path
+args = {"csv_path": r"./custom/text/Hawaii_embeddings.csv"}  # Update with your CSV file path
 embeddings_df = load_embeddings_df(args["csv_path"])
 
 model = "gpt-3.5-turbo"
