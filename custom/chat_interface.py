@@ -1,10 +1,7 @@
 import streamlit as st
-from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
-from openai.embeddings_utils import cosine_similarity
 import openai
 
-import os
 
 from search_embeddings import load_embeddings_df, search_embeddings
 
