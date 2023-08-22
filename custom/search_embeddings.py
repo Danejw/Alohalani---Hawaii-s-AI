@@ -12,7 +12,6 @@ import numpy as np
 import streamlit as st
 
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
 def load_embeddings_df(csv_path):
@@ -58,7 +57,7 @@ def count_tokens(text):
     return len(encoding.encode(text))
 
 
-def search_embeddings(df, query, n=3, pprint=True, n_lines=1):
+def search_embeddings(df, query, embeddings_model: OpenAIEmbeddings, n=3, pprint=True, n_lines=1):
     embedding = embed_item(query, embeddings_model)
     df['similarities'] = df.embeddings.apply(lambda x: cosine_similarity(x, embedding))
     # print(df.head())
@@ -83,9 +82,6 @@ def search_embeddings(df, query, n=3, pprint=True, n_lines=1):
     return res
 
 
-embeddings_model = OpenAIEmbeddings()
-# print(embeddings_df.head())
-
 
 class GPTChat:
     def __init__(self):
@@ -106,7 +102,7 @@ class GPTChat:
         self.add_message('user', user_input)
         
         response = openai.ChatCompletion.create(
-            model='gpt-4',
+            model='gpt-3.5-turbo',
             messages=self.messages,
             temperature=0,
             stream=True

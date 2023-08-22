@@ -10,11 +10,9 @@ import openai
 from search_embeddings import load_embeddings_df_from_github, search_embeddings
 
 # Provide api key
-#openai.api_key = st.secrets["OPENAI_API_KEY"]
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
-# Load embeddings model and dataframe
-embeddings_model = OpenAIEmbeddings()
 
 args = {"csv_path": r"./custom/text/Hawaii_embeddings.csv"}  # Update with your CSV file path
 embeddings_df = load_embeddings_df_from_github(args["csv_path"])
@@ -70,25 +68,48 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-def main():
+def main():    
     # Initialize session state
     if "chatbot" not in st.session_state:
         st.session_state.chatbot = GPTChat()
         
+    # Initialize OpenAI API key
+    api_key = None
 
     # Play Hawaiian music (optional)
     #st.audio("hawaii_music.mp3", format="audio/mp3")
 
     # Bring your own key
-    api_key = st.text_input("Enter your OpenAI API key", type="password")
+    api_key_input = st.text_input("Enter your OpenAI API key", type="password")
     openai_link = "https://platform.openai.com/account/api-keys"
     
     
-    if api_key:
-        openai.api_key = api_key
+    if api_key_input:
+        if (api_key_input == st.secrets["SECRET_PASSWORD"]):
+            api_key = st.secrets["MY_OPENAI_API_KEY"]
+            
+            with st.chat_message("assistant", avatar="🌺"):
+                st.write("E komo mai! ʻO ʻoe ka mea maikaʻi a i ʻike i ka hunauna hōʻoluʻolu! 🔑")
+                
+        elif api_key_input[:3] == "sk-":
+            api_key = api_key_input
+            
+        else:
+            # Display assistant response in chat message container
+            with st.chat_message("assistant", avatar="🌺"):
+                st.write("Please enter a valid OpenAI API key.")
     else:
         st.markdown("<div style='text-align: center'>Don't have an api key yet? Get one <a href='" + openai_link + "'>here.</a> 👈🏾</div>", unsafe_allow_html=True)
 
+    # Check if api_key is set, and if so, initialize OpenAIEmbeddings
+    if api_key:
+        openai.api_key = api_key  # Set the API key for the OpenAI library
+        
+        embedding_model = OpenAIEmbeddings(openai_api_key=api_key)  # Initialize the OpenAI embeddings model
+
+
+
+    # Title css
     st.markdown(
         """
         <style>
@@ -99,7 +120,6 @@ def main():
         """,
         unsafe_allow_html=True
     )
-
 
     # Streamlit UI
     st.markdown("<h1 class='title'>🌺🌺🌺🌺 Aloha! 🌺🌺🌺🌺</h1>", unsafe_allow_html=True)
@@ -126,8 +146,8 @@ I am thrilled to introduce myself as Alohalani, your go-to assistant for all thi
 
 🌺 Mahalo nui loa! 🌺""")
 
-        
-    # Display chat messages from history on app rerun
+                
+        # Display chat messages from history on app rerun
     displayed_messages = set()  # To keep track of displayed messages
 
     for message in st.session_state.chatbot.messages:
@@ -147,25 +167,39 @@ I am thrilled to introduce myself as Alohalani, your go-to assistant for all thi
         
 
 
-
     if user_input := st.chat_input("Ask me anything about Hawaii, Hawaiian history, or its culture.", key="user_input"):
-        related_code = search_embeddings(embeddings_df, user_input, n=5, pprint=True, n_lines=1)
-        related_code_text = '\n'.join(related_code.text.values)  # Update to 'text' column
         
-        # Display user message in chat message container
-        with st.chat_message("user", avatar="🙂"):
-            st.markdown(user_input)
-            st.session_state.chatbot.add_message("user", user_input)
+        if (api_key != None):
+            related_content = search_embeddings(embeddings_df, user_input, embedding_model, n=5, pprint=True, n_lines=1)
+            related_content_text = '\n'.join(related_content.text.values)
 
+            #st.markdown(related_content_text)
             
-        # Display assistant response in chat message container
-        with st.chat_message("assistant", avatar="🌺"):
-            message_placeholder = st.empty()
-            full_response = ""
-            
-            full_response = st.session_state.chatbot.get_gpt_response(user_input, message_placeholder)
-            
-            st.session_state.chatbot.add_message("assistant", full_response)
+            # Display user message in chat message container
+            with st.chat_message("user", avatar="🙂"):
+                st.markdown(user_input)
+                st.session_state.chatbot.add_message("user", user_input)
+
+                
+            # Display assistant response in chat message container
+            with st.chat_message("assistant", avatar="🌺"):
+                message_placeholder = st.empty()
+                full_response = ""
+                
+                st.session_state.chatbot.add_message("system", f'context:\n{related_content_text}')
+                full_response = st.session_state.chatbot.get_gpt_response(user_input, message_placeholder)
+                
+                st.session_state.chatbot.add_message("assistant", full_response)
+        else:
+            # Display assistant response in chat message container
+            with st.chat_message("assistant", avatar="🌺"):
+                st.markdown("Please enter your OpenAI API key.")
+                #st.session_state.chatbot.add_message("assistant", "Please enter your OpenAI API key.")
+        
+        
+
+
+
         
     # Create placeholders for the links
     link1_placeholder = st.empty()
