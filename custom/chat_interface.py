@@ -41,10 +41,16 @@ class GPTChat:
 
         full_response = ""
 
+        sentMessages: list[dict[str,str]] = []
+        if len(self.messages) > 5:
+            sentMessages = self.messages[-5:]
+        else:
+            sentMessages = self.messages
+
         self.isGenerating = True
         for response in openai.ChatCompletion.create(
             model=model,
-            messages=self.messages,
+            messages=sentMessages,
             temperature=0,
             stream=True
         ):
