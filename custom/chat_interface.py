@@ -10,7 +10,7 @@ import openai
 from search_embeddings import load_embeddings_df_from_github, search_embeddings
 
 # Provide api key
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+#openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
 
@@ -224,13 +224,13 @@ I am thrilled to introduce myself as Alohalani, your go-to assistant for all thi
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.write("<div style='text-align: center'><a href='" + link1 + "'>Buy Me Coffee ☕️</a></div>", unsafe_allow_html=True)
+            st.write("<div style='text-align: center'><a href='" + link1 + "'>Buy Me Coffee </a> ☕️</div>", unsafe_allow_html=True)
 
         with col2:
-            st.write("<div style='text-align: center'><a href='" + link2 + "'>Fuel My Creativity ❤️🔥</a></div>", unsafe_allow_html=True)
+            st.write("<div style='text-align: center'><a href='" + link2 + "'>Fuel My Creativity </a> ❤️🔥</div>", unsafe_allow_html=True)
 
         with col3:
-            st.write("<div style='text-align: center'><a href='" + link3 + "'>GitHub ⭐</a></div>", unsafe_allow_html=True)
+            st.write("<div style='text-align: center'><a href='" + link3 + "'>GitHub </a> ⭐</div>", unsafe_allow_html=True)
     
 if __name__ == "__main__":
     main()
