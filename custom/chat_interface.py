@@ -122,7 +122,7 @@ def main():
     )
 
     # Streamlit UI
-    st.markdown("<h1 class='title'>🌺🌺🌺🌺 Aloha! 🌺🌺🌺🌺</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='title'>🌺🌺🌺 Aloha! 🌺🌺🌺</h1>", unsafe_allow_html=True)
 
     # Display image of Alohalani
     st.image("./images/alohalani.gif", use_column_width=True)
