@@ -131,7 +131,7 @@ def main():
     st.markdown("<h1 class='title'>🌺🌺🌺 Aloha! 🌺🌺🌺</h1>", unsafe_allow_html=True)
 
     # Display image of Alohalani
-    st.image("./images/alohalani.gif", use_column_width=True)
+    st.image("./images/AlohaLaniTrans.png", use_column_width=True)
     
     # Introudctory methods
     st.markdown("<h1 class='title'>I'm Alohalani - Your Hawaiian Assistant 🤙🏼</h1>", unsafe_allow_html=True)
