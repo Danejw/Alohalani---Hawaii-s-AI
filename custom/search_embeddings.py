@@ -11,6 +11,8 @@ from termcolor import colored
 import numpy as np
 import streamlit as st
 
+from gpt import GPTChat
+
 
 
 
@@ -82,43 +84,6 @@ def search_embeddings(df, query, embeddings_model: OpenAIEmbeddings, n=3, pprint
     return res
 
 
-
-class GPTChat:
-    def __init__(self):
-        self.messages = [{'role': 'system', 'content': "Hello, I'm a Hawaii made assitant that can answer your questions about Hawaii, Hawaiian history and culture. Respond with the spirit of Aloha using hawaiin words and phrases."}]
-
-    def take_user_input(self):
-        user_input = input("You: ")
-        return user_input
-
-    def add_message(self, role, content):
-        self.messages.append({'role': role, 'content': content})
-
-    def clear_messages(self):
-        '''clears all messages except the system message'''
-        self.messages = [self.messages[0]]
-
-    def get_gpt_response(self, user_input):
-        self.add_message('user', user_input)
-        
-        response = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
-            messages=self.messages,
-            temperature=0,
-            stream=True
-        )
-
-        responses = ""
-
-        for chunk in response:
-            response_content = chunk.get("choices", [{}])[0].get("delta", {}).get("content")
-            if response_content:
-                responses += response_content
-                print(response_content, end='', flush=True)
-
-        self.add_message('assistant', responses)
-
-        return responses
     
 if __name__ == "__main__":
     import argparse
