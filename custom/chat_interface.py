@@ -6,10 +6,10 @@ import numpy as np
 import streamlit as st
 from langchain.embeddings import OpenAIEmbeddings
 import openai
-import elevenlabs
+#import elevenlabs
 
-from audio_recorder_streamlit import audio_recorder
-import whisper
+#from audio_recorder_streamlit import audio_recorder
+#import whisper
 from gpt import AlohaLaniChat
 
 from search_embeddings import load_embeddings_df_from_github, search_embeddings
@@ -24,27 +24,27 @@ embeddings_df = load_embeddings_df_from_github(args["csv_path"])
 
 
 
-def stream_audio(text : str):
-    audio_stream = elevenlabs.generate(
-        text=text,
-        voice="Maya",
-        stream=True,      
-    )
+# def stream_audio(text : str):
+#     audio_stream = elevenlabs.generate(
+#         text=text,
+#         voice="Maya",
+#         stream=True,      
+#     )
     
-    output = elevenlabs.play(audio_stream)
+#     output = elevenlabs.play(audio_stream)
 
-    #output = elevenlabs.stream(audio_stream)
-    #return output
+#     #output = elevenlabs.stream(audio_stream)
+#     #return output
 
-def transcribe_audio(audio_bytes):
-    print("Transcribing...")
-    model = whisper.load_model("medium")
+# def transcribe_audio(audio_bytes):
+#     print("Transcribing...")
+#     model = whisper.load_model("medium")
     
-    print(whisper.available_models())
+#     print(whisper.available_models())
     
-    result = model.transcribe(audio_bytes )
-    print(result)
-    return result["text"]
+#     result = model.transcribe(audio_bytes )
+#     print(result)
+#     return result["text"]
 
 
 # Set the page configurations
@@ -182,9 +182,9 @@ I am thrilled to introduce myself as Alohalani, your go-to assistant for all thi
                 
                 st.session_state.chatbot.add_message("assistant", full_response)
                 
-            if experimental_features:
-                output = stream_audio(full_response)
-                print(output)
+            # if experimental_features:
+            #     output = stream_audio(full_response)
+            #     print(output)
                 
                 #elevenlabs.play(output)
         else:
