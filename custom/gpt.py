@@ -4,13 +4,6 @@ from langchain.embeddings import OpenAIEmbeddings
 import streamlit as st
 
 
-openai.api_key="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"
-
-class Embeddings:
-    def __init__(self):
-        self.model = OpenAIEmbeddings(openai_api_key="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")
-
-
 class GPTChat:
     def __init__(self):
         self.messages = []
